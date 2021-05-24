@@ -1,6 +1,6 @@
 Describe 'Module Manifest Tests' {
     BeforeAll {
-        $ModuleManifestName = 'PoshOver.psd1'
+        $ModuleManifestName = 'Poshover.psd1'
         $script:ModuleManifestPath = "$PSScriptRoot\..\$ModuleManifestName"
     }
 

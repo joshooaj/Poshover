@@ -114,7 +114,7 @@ function Update-ScriptsToProcess {
 }
 
 properties {
-	$script:ModuleName = 'PoshOver'
+	$script:ModuleName = 'Poshover'
 	$script:CompanyName = 'Milestone Systems'
     $script:ModuleVersion = [version]::new()
 }

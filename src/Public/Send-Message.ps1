@@ -1,25 +1,25 @@
 function Send-Message {
     <#
     .SYNOPSIS
-        Sends a message to the PushOver API
+        Sends a message to the Pushover API
     .EXAMPLE
-        PS C:\> Send-PushOverMessage -Token $token -User $user -Title 'What time is it?' -Message 'It''s time for lunch'
+        PS C:\> Send-PushoverMessage -Token $token -User $user -Title 'What time is it?' -Message 'It''s time for lunch'
         Sends a notification to the user or group specified in the $user string variable, from the application designed by the application API token value in $token
     .EXAMPLE
-        PS C:\> Send-PushOverMessage -Token $token -User $user -Title 'What time is it?' -Message 'It''s time for lunch' -MessagePriority Emergency -RetryInterval (New-TimeSpan -Seconds 60) -ExpireAfter (New-TimeSpan -Hours 1)
+        PS C:\> Send-PushoverMessage -Token $token -User $user -Title 'What time is it?' -Message 'It''s time for lunch' -MessagePriority Emergency -RetryInterval (New-TimeSpan -Seconds 60) -ExpireAfter (New-TimeSpan -Hours 1)
         Sends the same notification as Example 1, except with emergency priority which results in the notification being repeated every 60 seconds, until an hour has passed or the message has been acknowledged.
     .OUTPUTS
         Returns a receipt string if the MessagePriority value was 'Emergency' (2)
     #>
     [CmdletBinding()]
     param (
-        # Specifies the application API token/key from which the PushOver notification should be sent.
+        # Specifies the application API token/key from which the Pushover notification should be sent.
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
         [string]
         $Token,
 
-        # Specifies the User or Group identifier to which the PushOver message should be sent.
+        # Specifies the User or Group identifier to which the Pushover message should be sent.
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
         [string]
@@ -31,12 +31,12 @@ function Send-Message {
         [string[]]
         $Device,
 
-        # Specifies the title of the PushOver notification. The default will be the application name configured for the application API token supplied.
+        # Specifies the title of the Pushover notification. The default will be the application name configured for the application API token supplied.
         [Parameter()]
         [string]
         $Title,
 
-        # Specifies the message to be sent with the PushOver notification.
+        # Specifies the message to be sent with the Pushover notification.
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
         [string]
@@ -59,7 +59,7 @@ function Send-Message {
         [MessagePriority]
         $MessagePriority,
 
-        # Specifies the interval between emergency PushOver notifications. PushOver will retry until the message is acknowledged, or expired. Valid only with MessagePriority of 'Emergency'.
+        # Specifies the interval between emergency Pushover notifications. Pushover will retry until the message is acknowledged, or expired. Valid only with MessagePriority of 'Emergency'.
         [Parameter()]
         [ValidateScript({
             if ($_.TotalSeconds -lt 30) {
@@ -73,7 +73,7 @@ function Send-Message {
         [timespan]
         $RetryInterval = (New-TimeSpan -Minutes 1),
 
-        # Specifies the amount of time unacknowledged notifications will be retried before PushOver stops sending notifications. Valid only with MessagePriority of 'Emergency'.
+        # Specifies the amount of time unacknowledged notifications will be retried before Pushover stops sending notifications. Valid only with MessagePriority of 'Emergency'.
         [Parameter()]
         [ValidateScript({
             if ($_.TotalSeconds -le 30) {
@@ -92,14 +92,14 @@ function Send-Message {
         [datetime]
         $Timestamp = (Get-Date),
 
-        # Optionally specifies one or more tags to associate with the PushOver notification. Tags can be used to cancel emergency notifications in bulk.
+        # Optionally specifies one or more tags to associate with the Pushover notification. Tags can be used to cancel emergency notifications in bulk.
         [Parameter()]
         [string[]]
         $Tags
     )
 
     begin {
-        $uri = [PushOverUri]::Messages
+        $uri = [PushoverUri]::Messages
     }
 
     process {
