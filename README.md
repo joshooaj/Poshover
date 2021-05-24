@@ -1,4 +1,4 @@
-# PoshOver - A PowerShell module for PushOver
+# Poshover - A PowerShell module for Pushover
 
 There are a couple of existing PowerShell modules on GitHub and PSGallery for this, but truth-be-told the API is relatively easy to wrap in PowerShell so I wanted to write one in a format I'm used to.
 
