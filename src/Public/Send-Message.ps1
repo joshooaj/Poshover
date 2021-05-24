@@ -78,17 +78,24 @@ function Send-Message {
         # Optionally specifies the timestamp associated with the message. Default is DateTime.Now.
         [Parameter()]
         [datetime]
-        $Timestamp = (Get-Date)
+        $Timestamp = (Get-Date),
+
+        # Optionally specifies one or more tags to associate with the PushOver notification. Tags can be used to cancel emergency notifications in bulk.
+        [Parameter()]
+        [string[]]
+        $Tags
     )
 
     process {
         $uri = [uri]"$($script:BaseUri)/messages.json"
+
         $deviceList = if ($null -ne $Device) {
             [string]::Join(',', $Device)
-        }
+        } else { $null }
 
-        if ($MessagePriority -eq [MessagePriority]::Emergency) {
-        }
+        $tagList = if ($null -ne $Tags) {
+            [string]::Join(',', $Tags)
+        } else { $null }
 
         $body = @{
             token = $Token
@@ -98,15 +105,17 @@ function Send-Message {
             message = $Message
             url = $Url
             url_title = $UrlTitle
-            priority = $Priority
+            priority = $MessagePriority
             retry = [int]$RetryInterval.TotalSeconds
             expire = [int]$ExpireAfter.TotalSeconds
             timestamp = [int]([datetimeoffset]::new($Timestamp).ToUnixTimeMilliseconds() / 1000)
+            tags = $tagList
         } | ConvertTo-Json
+
+        Write-Verbose "Message body:`r`n$body"
 
         try {
             $response = Invoke-RestMethod -Method Post -Uri $uri -Body $body -ContentType application/json -UseBasicParsing
-            $response
         }
         catch {
             $statusCode = $_.Exception.Response.StatusCode.value__
@@ -128,6 +137,11 @@ function Send-Message {
             foreach ($problem in $response.errors) {
                 Write-Error $problem -TargetObject $response
             }
+            return
+        }
+
+        if ($null -ne $response.receipt) {
+            Write-Output $response.receipt
         }
     }
 }
