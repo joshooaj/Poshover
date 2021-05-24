@@ -98,9 +98,11 @@ function Send-Message {
         $Tags
     )
 
-    process {
-        $uri = [uri]"$($script:BaseUri)/messages.json"
+    begin {
+        $uri = [PushOverUri]::Messages
+    }
 
+    process {
         $deviceList = if ($null -ne $Device) {
             [string]::Join(',', $Device)
         } else { $null }

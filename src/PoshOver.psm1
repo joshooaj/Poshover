@@ -11,5 +11,4 @@ foreach ($import in $Classes + $Public + $Private) {
     }
 }
 
-$script:BaseUri = 'https://api.pushover.net/1'
 Export-ModuleMember -Function ($Public.BaseName)
