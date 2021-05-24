@@ -1,4 +1,16 @@
 function Send-Message {
+    <#
+    .SYNOPSIS
+        Sends a message to the PushOver API
+    .EXAMPLE
+        PS C:\> Send-PushOverMessage -Token $token -User $user -Title 'What time is it?' -Message 'It''s time for lunch'
+        Sends a notification to the user or group specified in the $user string variable, from the application designed by the application API token value in $token
+    .EXAMPLE
+        PS C:\> Send-PushOverMessage -Token $token -User $user -Title 'What time is it?' -Message 'It''s time for lunch' -MessagePriority Emergency -RetryInterval (New-TimeSpan -Seconds 60) -ExpireAfter (New-TimeSpan -Hours 1)
+        Sends the same notification as Example 1, except with emergency priority which results in the notification being repeated every 60 seconds, until an hour has passed or the message has been acknowledged.
+    .OUTPUTS
+        Returns a receipt string if the MessagePriority value was 'Emergency' (2)
+    #>
     [CmdletBinding()]
     param (
         # Specifies the application API token/key from which the PushOver notification should be sent.
