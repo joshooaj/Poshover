@@ -18,7 +18,7 @@
   <h3 align="center">Poshover - A PowerShell Module for Pushover</h3>
 
   <p align="center">
-    Pushover is an easy-to-use service for sending and receiving mobile and desktop push notifications. They support priority levels, acknowledgements, attachments, group notifications and more. This module helps to make the Pushover API easily accessible in PowerShell from version 5.1 up to PowerShell 7+. Send notifications from PowerShell on Windows, Mac, or Linux, based on whatever you want! Monitor Event Logs, your Twitter feed, your local traffic and weather, your home automation, surveillance or access control, and send notifications to one or more users. Want to build an on-call notification system? Make sure to use the MessagePriority parameter and set it to "Emergency", and your recipients will receive repeated notifications for up to 3 hours.
+    Send push notifications to mobile devices and desktops from PowerShell using the Pushover service!
     <br />
     <a href="https://github.com/jhendricks123/Poshover"><strong>Explore the docs »</strong></a>
     <br />
