@@ -1,4 +1,4 @@
-function Send-Message {
+function Send-Pushover {
     <#
     .SYNOPSIS
         Sends a message to the Pushover API
@@ -16,13 +16,13 @@ function Send-Message {
         # Specifies the application API token/key from which the Pushover notification should be sent.
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
-        [string]
+        [securestring]
         $Token,
 
         # Specifies the User or Group identifier to which the Pushover message should be sent.
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
-        [string]
+        [securestring]
         $User,
 
         # Optionally specifies one or more devices to which notifications should be sent. Useful for sending notifications to a targetted device instead of all of the user's devices.
@@ -41,6 +41,16 @@ function Send-Message {
         [ValidateNotNullOrEmpty()]
         [string]
         $Message,
+
+        # Optionally specifies an image in bytes to be attached to the message.
+        [Parameter()]
+        [byte[]]
+        $Attachment,
+
+        # Optionally specifies the file name to associate with the attachment.
+        [Parameter()]
+        [string]
+        $FileName = 'attachment.jpg',
 
         # Optionally specifies a supplementary URL associated with the message.
         [Parameter()]
@@ -99,7 +109,7 @@ function Send-Message {
     )
 
     begin {
-        $uri = [PushoverUri]::Messages
+        $uri = $script:PushoverApiUri + '/messages.json'
     }
 
     process {
@@ -111,36 +121,50 @@ function Send-Message {
             [string]::Join(',', $Tags)
         } else { $null }
 
-        $body = @{
-            token = $Token
-            user = $User
+        $body = [ordered]@{
+            token = ([pscredential]::new('unused', $Token)).GetNetworkCredential().Password
+            user = ([pscredential]::new('unused', $User)).GetNetworkCredential().Password
             device = $deviceList
             title = $Title
             message = $Message
             url = $Url
             url_title = $UrlTitle
-            priority = $MessagePriority
+            priority = [int]$MessagePriority
             retry = [int]$RetryInterval.TotalSeconds
             expire = [int]$ExpireAfter.TotalSeconds
             timestamp = [int]([datetimeoffset]::new($Timestamp).ToUnixTimeMilliseconds() / 1000)
             tags = $tagList
-        } | ConvertTo-Json
+        }
 
-        Write-Verbose "Message body:`r`n$body"
 
         try {
-            $response = Invoke-RestMethod -Method Post -Uri $uri -Body $body -ContentType application/json -UseBasicParsing
+            if ($Attachment.Length -eq 0) {
+                $bodyJson = $body | ConvertTo-Json
+                Write-Verbose "Message body:`r`n$bodyJson"
+                $response = Invoke-RestMethod -Method Post -Uri $uri -Body $bodyJson -ContentType application/json -UseBasicParsing
+            }
+            else {
+                $response = Send-MessageWithAttachment -Body $body -Attachment $Attachment -FileName $FileName
+            }
+
         }
         catch {
+            Write-Verbose 'Handling HTTP error in Invoke-RestMethod response'
             $statusCode = $_.Exception.Response.StatusCode.value__
+            Write-Verbose "HTTP status code $statusCode"
             if ($statusCode -lt 400 -or $statusCode -gt 499) {
                 throw
             }
 
             try {
+                Write-Verbose 'Parsing HTTP request error response'
                 $stream = $_.Exception.Response.GetResponseStream()
                 $reader = [io.streamreader]::new($stream)
                 $response = $reader.ReadToEnd() | ConvertFrom-Json
+                if ([string]::IsNullOrWhiteSpace($response)) {
+                    throw $_
+                }
+                Write-Verbose "Response body:`r`n$response"
             }
             finally {
                 $reader.Dispose()
@@ -148,10 +172,17 @@ function Send-Message {
         }
 
         if ($response.status -ne 1) {
-            foreach ($problem in $response.errors) {
-                Write-Error $problem -TargetObject $response
+            if ($null -ne $response.error) {
+                Write-Error $response.error
             }
-            return
+            elseif ($null -ne $response.errors) {
+                foreach ($problem in $response.errors) {
+                    Write-Error $problem
+                }
+            }
+            else {
+                $response
+            }
         }
 
         if ($null -ne $response.receipt) {

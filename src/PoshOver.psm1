@@ -11,4 +11,7 @@ foreach ($import in $Classes + $Public + $Private) {
     }
 }
 
+$script:PushoverApiDefaultUri = 'https://api.pushover.net/1'
+$script:PushoverApiUri = $script:PushoverApiDefaultUri
+
 Export-ModuleMember -Function ($Public.BaseName)
