@@ -14,13 +14,15 @@ function Send-Pushover {
     [CmdletBinding()]
     param (
         # Specifies the application API token/key from which the Pushover notification should be sent.
-        [Parameter(Mandatory)]
+        # Note: The default value will be used if it has been previously set with Set-PushoverConfig
+        [Parameter()]
         [ValidateNotNullOrEmpty()]
         [securestring]
         $Token,
 
         # Specifies the User or Group identifier to which the Pushover message should be sent.
-        [Parameter(Mandatory)]
+        # Note: The default value will be used if it has been previously set with Set-PushoverConfig
+        [Parameter()]
         [ValidateNotNullOrEmpty()]
         [securestring]
         $User,
@@ -110,9 +112,23 @@ function Send-Pushover {
 
     begin {
         $uri = $script:PushoverApiUri + '/messages.json'
+        $config = Get-PushoverConfig
     }
 
     process {
+        if ($null -eq $Token -and $null -eq $config.Token) {
+            $Token = $config.Token
+            if ($null -eq $Token) {
+                throw "Token not provided and no default application token has been set using Set-PushoverConfig."
+            }
+        }
+        if ($null -eq $User -and $null -eq (Get-PushoverConfig).User) {
+            $User = $config.User
+            if ($null -eq $User) {
+                throw "User not provided and no default user id has been set using Set-PushoverConfig."
+            }
+        }
+
         $deviceList = if ($null -ne $Device) {
             [string]::Join(',', $Device)
         } else { $null }
@@ -136,7 +152,6 @@ function Send-Pushover {
             tags = $tagList
         }
 
-
         try {
             if ($Attachment.Length -eq 0) {
                 $bodyJson = $body | ConvertTo-Json
@@ -146,7 +161,6 @@ function Send-Pushover {
             else {
                 $response = Send-MessageWithAttachment -Body $body -Attachment $Attachment -FileName $FileName
             }
-
         }
         catch {
             Write-Verbose 'Handling HTTP error in Invoke-RestMethod response'

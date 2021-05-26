@@ -14,4 +14,9 @@ foreach ($import in $Classes + $Public + $Private) {
 $script:PushoverApiDefaultUri = 'https://api.pushover.net/1'
 $script:PushoverApiUri = $script:PushoverApiDefaultUri
 
+$script:configPath = Join-Path $env:APPDATA 'Poshover\config.xml'
+$script:config = $null
+if (-not (Import-PushoverConfig)) {
+    Reset-PushoverConfig
+}
 Export-ModuleMember -Function ($Public.BaseName)
