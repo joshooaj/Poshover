@@ -106,7 +106,7 @@ PrivateData = @{
         ProjectUri = 'https://github.com/jhendricks123/Poshover'
 
         # A URL to an icon representing this module.
-        IconUri = 'https://github.com/jhendricks123/Poshover/raw/main/icon.png'
+        IconUri = 'https://github.com/jhendricks123/Poshover/raw/main/images/module_icon.png'
 
         # ReleaseNotes of this module
         # ReleaseNotes = ''
