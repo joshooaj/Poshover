@@ -155,7 +155,7 @@ function Send-Pushover {
         try {
             if ($Attachment.Length -eq 0) {
                 $bodyJson = $body | ConvertTo-Json
-                Write-Verbose "Message body:`r`n$bodyJson"
+                Write-Verbose "Message body:`r`n$($bodyJson.Replace($Body.token, "********").Replace($Body.user, "********"))"
                 $response = Invoke-RestMethod -Method Post -Uri $uri -Body $bodyJson -ContentType application/json -UseBasicParsing
             }
             else {

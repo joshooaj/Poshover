@@ -47,7 +47,7 @@ function Send-MessageWithAttachment {
                 $jpegContent.Headers.ContentDisposition.FileName = $FileName
                 $content.Add($jpegContent)
 
-                Write-Verbose "Message body:`r`n$($content.ReadAsStringAsync().Result.Substring(0, 2000))"
+                Write-Verbose "Message body:`r`n$($content.ReadAsStringAsync().Result.Substring(0, 2000).Replace($Body.token, "********").Replace($Body.user, "********"))"
                 $result = $client.PostAsync($uri, $content).Result
                 Write-Output ($result.Content.ReadAsStringAsync().Result | ConvertFrom-Json)
             }
