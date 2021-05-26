@@ -5,7 +5,7 @@
 [![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
 [![LinkedIn][linkedin-shield]][linkedin-url]
-
+[![Twitter][twitter-shield]][twitter-url]
 
 
 <!-- PROJECT LOGO -->
@@ -23,8 +23,6 @@
     <a href="https://github.com/jhendricks123/Poshover"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/jhendricks123/Poshover">View Demo</a>
-    ·
     <a href="https://github.com/jhendricks123/Poshover/issues">Report Bug</a>
     ·
     <a href="https://github.com/jhendricks123/Poshover/issues">Request Feature</a>
@@ -81,16 +79,14 @@ Before you use Poshover and the Pushover API, you need a Pushover account and an
 
 ### Prerequisites
 
-To use this module, you must have an account on [Pushover.net](https://pushover.net) and your own application/api token.
-* Create a Pushover.net account
-* Create an Application and save your token
-* Create a delivery group or acquire one or more user ID's to which notifications should be sent
-
-To clone and develop the module, you should have a handful of PowerShell modules already installed
-on your development system.
-* psake for build
-* Pester for testing
-* PSScriptAnalyzer for linting
+You need a Pushover account, a user or group key to which messages will be sent, and an application token to which
+1. Go sign up (for free) on [Pushover.net](https://pushover.net/signup) and confirm your email address.
+2. Copy your __user key__ and save it for later.
+3. Scroll down to __Your Applications__ and click [Create an Application/API Token](https://pushover.net/apps/build).
+4. Give it a name (this will be the title of your push notifications when you don't supply your own title)
+5. Pick an icon. It's optional, but you really want your own icon :)
+6. Read the ToS and check the box, then click __Create Application__
+7. Save your __API Token/Key__ for later. You're ready to install and click __Back to apps__ or click on the Pushover logo in the title bar
 
 ### Installation
 
@@ -110,8 +106,21 @@ Install-Module -Name Poshover -AllowPrerelease
 <!-- USAGE EXAMPLES -->
 ## Usage
 
+Got your application token and user keys handy? Good!
 ```powershell
-Send-Pushover -Token $apikey -User $deliverygroup -Message 'Have a nice day!'
+$token = Read-Host -Prompt 'Application API Token' -AsSecureString
+$user = Read-Host -Prompt 'User Key' -AsSecureString
+Send-Pushover -Token $token -User $user -Message 'Have a nice day!'
+```
+
+Don't want to enter your token and user keys every time? You don't have to!
+```powershell
+# This will securely save your token and user keys to %appdata%/Poshover/config.xml
+$token = Read-Host -Prompt 'Application API Token' -AsSecureString
+$user = Read-Host -Prompt 'User Key' -AsSecureString
+Set-PushoverConfig -Token $token -User $user
+
+Send-Pushover -Message 'You are fantastic!'
 ```
 
 ## Building
@@ -184,4 +193,6 @@ Project Link: [https://github.com/jhendricks123/Poshover](https://github.com/jhe
 [license-url]: https://github.com/jhendricks123/poshover/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/joshuahendricks/
+[twitter-shield]: https://img.shields.io/badge/-Twitter-black.svg?style=for-the-badge&logo=twitter&colorB=555
+[twitter-url]: https://twitter.com/joshooaj
 [product-screenshot]: images/screenshot.png
