@@ -16,7 +16,7 @@ function Set-PushoverConfig {
         Sets the Pushover API URI to http://localhost:8888 for the duration of the PowerShell session
         or until the Poshover module is forcefully imported again.
     #>
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     param (
         # Species the base URI to which all HTTP requests should be sent. Recommended to change this only for the purposes of test automation.
         [Parameter()]
@@ -41,13 +41,19 @@ function Set-PushoverConfig {
 
     process {
         if ($PSBoundParameters.ContainsKey('ApiUri')) {
-            $script:config.PushoverAPiUri = $ApiUri.ToString()
+            if ($PSCmdlet.ShouldProcess("Pushover ApiUri", "Set value to '$ApiUri'")) {
+                $script:config.PushoverAPiUri = $ApiUri.ToString()
+            }
         }
         if ($PSBoundParameters.ContainsKey('Token')) {
-            $script:config.DefaultAppToken = $Token
+            if ($PSCmdlet.ShouldProcess("Pushover Default Application Token", "Set value")) {
+                $script:config.DefaultAppToken = $Token
+            }
         }
         if ($PSBoundParameters.ContainsKey('User')) {
-            $script:config.DefaultUserToken = $User
+            if ($PSCmdlet.ShouldProcess("Pushover Default User Key", "Set value")) {
+                $script:config.DefaultUserToken = $User
+            }
         }
 
         if (-not $Temporary) {

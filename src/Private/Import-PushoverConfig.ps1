@@ -7,6 +7,7 @@ function Import-PushoverConfig {
         can be imported, the function returns true. Otherwise it returns false.
     #>
     [CmdletBinding()]
+    [OutputType([bool])]
     param ()
 
     process {
