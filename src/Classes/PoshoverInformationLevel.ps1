@@ -1,0 +1,4 @@
+enum PoshoverInformationLevel {
+    Detailed
+    Quiet
+}
