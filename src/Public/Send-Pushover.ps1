@@ -104,6 +104,12 @@ function Send-Pushover {
         [datetime]
         $Timestamp = (Get-Date),
 
+        # Optionally specifies the notification sound to use
+        [Parameter()]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $Sound,
+
         # Optionally specifies one or more tags to associate with the Pushover notification. Tags can be used to cancel emergency notifications in bulk.
         [Parameter()]
         [string[]]
@@ -111,18 +117,18 @@ function Send-Pushover {
     )
 
     begin {
-        $uri = $script:PushoverApiUri + '/messages.json'
         $config = Get-PushoverConfig
+        $uri = $config.ApiUri + '/messages.json'
     }
 
     process {
-        if ($null -eq $Token -and $null -eq $config.Token) {
+        if ($null -eq $Token) {
             $Token = $config.Token
             if ($null -eq $Token) {
                 throw "Token not provided and no default application token has been set using Set-PushoverConfig."
             }
         }
-        if ($null -eq $User -and $null -eq (Get-PushoverConfig).User) {
+        if ($null -eq $User) {
             $User = $config.User
             if ($null -eq $User) {
                 throw "User not provided and no default user id has been set using Set-PushoverConfig."
@@ -138,8 +144,8 @@ function Send-Pushover {
         } else { $null }
 
         $body = [ordered]@{
-            token = ([pscredential]::new('unused', $Token)).GetNetworkCredential().Password
-            user = ([pscredential]::new('unused', $User)).GetNetworkCredential().Password
+            token = $Token | ConvertTo-PlainText
+            user = $User | ConvertTo-PlainText
             device = $deviceList
             title = $Title
             message = $Message
@@ -150,6 +156,7 @@ function Send-Pushover {
             expire = [int]$ExpireAfter.TotalSeconds
             timestamp = [int]([datetimeoffset]::new($Timestamp).ToUnixTimeMilliseconds() / 1000)
             tags = $tagList
+            sound = $Sound
         }
 
         try {
