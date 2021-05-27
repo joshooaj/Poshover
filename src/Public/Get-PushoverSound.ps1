@@ -1,4 +1,8 @@
 function Get-PushoverSound {
+    <#
+    .SYNOPSIS
+        Gets a hashtable containing the names of sounds available on Pushover, and the description of those sounds
+    #>
     [CmdletBinding()]
     [OutputType([hashtable])]
     param (

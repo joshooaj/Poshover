@@ -1,4 +1,20 @@
 function Get-PushoverStatus {
+    <#
+    .SYNOPSIS
+        Gets the status of a Pushover notification using the receipt from Send-Pushover
+    .DESCRIPTION
+        When sending a Pushover notification with MessagePriority of 'Emergency', a receipt
+        is returned. This receipt is a random string associated with the notification and
+        can be used to check if and when the notification was delivered and acknowledged, or
+        if it has expired and is no longer causing notifications to be sent to the user(s).
+
+        When the notification is acknowledged, the user and device performing the acknowledgement
+        will be included in the returned [PoshoverNotificationStatus] response.
+    .EXAMPLE
+        PS C:\> $receipt = Send-Pushover -Message 'Are we there yet?' -MessagePriority Emergency -Sound tugboat
+        PS C:\> Get-PushoverStatus -Receipt $receipt
+        Sends an emergency Pushover message and then uses the receipt to check the status of that notification.
+    #>
     [CmdletBinding()]
     [OutputType([PoshoverNotificationStatus])]
     param (
