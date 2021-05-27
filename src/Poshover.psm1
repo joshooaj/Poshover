@@ -19,4 +19,17 @@ $script:config = $null
 if (-not (Import-PushoverConfig)) {
     Reset-PushoverConfig
 }
+
+$soundsCompleter = {
+    param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
+
+    $soundList = @('incoming', 'pianobar', 'climb', 'gamelan', 'bugle', 'vibrate', 'pushover', 'cosmic', 'spacealarm', 'updown', 'none', 'persistent', 'cashregister', 'mechanical', 'bike', 'classical', 'falling', 'alien', 'magic', 'siren', 'tugboat', 'intermission', 'echo')
+    $soundList | Where-Object {
+        $_ -like "$wordToComplete*"
+    } | Foreach-Object {
+        "'$_'"
+    }
+}
+Register-ArgumentCompleter -CommandName Send-Pushover -ParameterName Sound -ScriptBlock $soundsCompleter
+
 Export-ModuleMember -Function ($Public.BaseName)
