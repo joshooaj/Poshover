@@ -54,7 +54,17 @@
   </ol>
 </details>
 
+## NOTICE
 
+This repository is no longer maintained. The module has been renamed to joshooaj.PSPushover and a [new repository](https://github.com/joshooaj/PSPushover) has been created.
+The new repo has a number of improvements including:
+
+- Automatic documentation generation, updating, and publishing using PlatyPS, MkDocs, and GitHub Pages
+- Automatic building and testing on Linux, Windows, and MacOS
+- Automatic publishing of tagged versions to PSGallery after successfully passing tests
+- Automatic versioning using nbgv
+- Codespaces or devcontainer support
+- Built-in demo showing how a GitHub action runs and sends a notification when the repository gets starred
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
